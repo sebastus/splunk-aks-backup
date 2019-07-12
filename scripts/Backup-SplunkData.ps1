@@ -88,6 +88,8 @@ function Backup-SplunkData
         foreach ($item in $pods.items)
         {
             $podName = $item.metadata.name
+
+            Write-Verbose "Looking at $podName disks..."
         
             foreach ($volumeMount in $item.spec.containers[0].volumeMounts)
             {
@@ -97,6 +99,8 @@ function Backup-SplunkData
         
                     $diskName = "$volumeName-$podName"
 
+                    Write-Verbose "Backing up $diskName..."
+                    
                     Backup-Disk -aks_asset_rg $aks_asset_rg -diskname $diskName
                 }
             }

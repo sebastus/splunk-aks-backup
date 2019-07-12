@@ -24,10 +24,7 @@ function Backup-Disk
         [String]$aks_asset_rg,
         [Parameter(Mandatory=$true, 
             HelpMessage="Name of the disk to be backed up.")]
-        [String]$diskname,
-        [Parameter(Mandatory=$true, 
-            HelpMessage="Location of the snapshot.")]
-        [String]$location
+        [String]$diskname
     )
     BEGIN
     {
@@ -46,8 +43,8 @@ function Backup-Disk
         {
             $ss | Remove-AzSnapshot
         }
-        
-        $ssConfig =  New-AzSnapshotConfig -SourceUri $azdisk.Id -Location $location -CreateOption copy
+
+        $ssConfig =  New-AzSnapshotConfig -SourceUri $azdisk.Id -Location $azdisk.location -CreateOption copy
         New-AzSnapshot -Snapshot $ssConfig -SnapshotName $diskName -ResourceGroupName $aks_asset_rg
 
     }
