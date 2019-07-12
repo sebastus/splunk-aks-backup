@@ -38,12 +38,16 @@ function Backup-Disk
         $volumeName = $item.spec.volumeName
         $azdisk = Get-AzDisk -ResourceGroupName $aks_asset_rg -diskname "kubernetes-dynamic-$volumeName"
 
+        $ErrorActionPreference = "SilentlyContinue"
         $ss = Get-AzSnapshot -ResourceGroupName $aks_asset_rg -name $diskName
         if ($null -ne $ss)
         {
+            Write-Verbose "Removing old snapshot $diskName..."
             $ss | Remove-AzSnapshot
         }
+        $ErrorActionPreference = "continue"
 
+        Write-Verbose "Backing up disk: $diskName..."
         $ssConfig =  New-AzSnapshotConfig -SourceUri $azdisk.Id -Location $azdisk.location -CreateOption copy
         New-AzSnapshot -Snapshot $ssConfig -SnapshotName $diskName -ResourceGroupName $aks_asset_rg
 
