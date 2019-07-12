@@ -95,8 +95,8 @@ function Backup-SplunkData
             foreach ($volumeMount in $item.spec.containers.volumeMounts)
             {
                 $volumeMount
-                
-                if ($volumeMount.name -contains "splunk-idxcluster")
+
+                if ($volumeMount.name -like "splunk-idxcluster-*")
                 {
                     $volumeName = $volumeMount.name
         
