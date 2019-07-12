@@ -43,7 +43,7 @@ function Backup-Disk
         if ($null -ne $ss)
         {
             Write-Verbose "Removing old snapshot $diskName..."
-            $ss | Remove-AzSnapshot
+            $ss | Remove-AzSnapshot -Force
         }
         $ErrorActionPreference = "continue"
 
