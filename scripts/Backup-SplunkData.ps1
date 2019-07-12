@@ -45,6 +45,17 @@ function Connect-AksEnvironment
     Import-AzAksCredential -ResourceGroupName $aks_rg -Name $aks_name
 }
 
+function Get-Env
+{
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [String]$env
+    )
+    $var = Get-ChildItem env:$env
+    $var.value
+}
+
 function Backup-SplunkData
 {
     [CmdletBinding()]
