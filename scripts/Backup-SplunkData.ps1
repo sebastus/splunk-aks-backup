@@ -81,9 +81,26 @@ function Backup-SplunkData
     }
     PROCESS
     {
-        kubectl -n splunk get pvc -o json > pvc_as.json
+        kubectl -n splunk get pod -l role=splunk_indexer -o json > pods_as.json
 
-        Backup-Disk -aks_asset_rg $aks_asset_rg -diskname "splunk-idxcluster-data-indexer-0"
+        $pods = (get-content ./pods_as.json | convertfrom-json)
+                
+        foreach ($item in $pods.items)
+        {
+            $podName = $item.metadata.name
+        
+            foreach ($volumeMount in $item.spec.containers[0].volumeMounts)
+            {
+                if ($volumeMount.name -contains "splunk-idxcluster")
+                {
+                    $volumeName = $volumeMount.name
+        
+                    $diskName = "$volumeName-$podName"
+
+                    Backup-Disk -aks_asset_rg $aks_asset_rg -diskname $diskName
+                }
+            }
+        }
     }
     END
     {

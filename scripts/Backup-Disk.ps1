@@ -35,15 +35,21 @@ function Backup-Disk
     }
     PROCESS
     {
+
         $pvc = (get-content .\pvc_as.json | convertfrom-json)
         $item = ($pvc.items | where-object {$_.metadata.name -eq $diskname})
         $volumeName = $item.spec.volumeName
         $azdisk = Get-AzDisk -ResourceGroupName $aks_asset_rg -diskname "kubernetes-dynamic-$volumeName"
 
+        $ss = Get-AzSnapshot -ResourceGroupName $aks_asset_rg -name $diskName
+        if ($null -ne $ss)
+        {
+            $ss | Remove-AzSnapshot
+        }
+        
         $ssConfig =  New-AzSnapshotConfig -SourceUri $azdisk.Id -Location $location -CreateOption copy
-        $Snapshot = New-AzSnapshot -Snapshot $ssConfig -SnapshotName "disk-$diskName" -ResourceGroupName $aks_asset_rg
+        New-AzSnapshot -Snapshot $ssConfig -SnapshotName $diskName -ResourceGroupName $aks_asset_rg
 
-        $Snapshot.Name
     }
     END
     {
