@@ -91,7 +91,7 @@ function Backup-SplunkData
 
             Write-Verbose "Looking at $podName disks..."
         
-            foreach ($volumeMount in $item.spec.containers[0].volumeMounts)
+            foreach ($volumeMount in $item.spec.containers.volumeMounts)
             {
                 if ($volumeMount.name -contains "splunk-idxcluster")
                 {
@@ -100,7 +100,7 @@ function Backup-SplunkData
                     $diskName = "$volumeName-$podName"
 
                     Write-Verbose "Backing up $diskName..."
-                    
+
                     Backup-Disk -aks_asset_rg $aks_asset_rg -diskname $diskName
                 }
             }
