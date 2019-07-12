@@ -14,5 +14,5 @@ else
     exit 1
 fi
 
-azlogin --service-principal --tenant $AZURE_TENANT_ID -u $AZURE_APP_ID -p $AZURE_APP_KEY
+az login --service-principal --tenant $AZURE_TENANT_ID -u $AZURE_APP_ID -p $AZURE_APP_KEY
 az aks get-credentials -g $AKS_RG -n $AKS_NAME
