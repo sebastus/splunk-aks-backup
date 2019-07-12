@@ -56,14 +56,14 @@ function Backup-SplunkData
         Write-Verbose "$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)"
 
         # get environment vars
-        $tenant_id = Get-ChildItem env:AZURE_TENANT_ID
-        $app_id = Get-ChildItem env:AZURE_APP_ID
-        $app_key = Get-ChildItem env:AZURE_APP_KEY
-        $subscription_id = Get-ChildItem env:AZURE_SUBSCRIPTION_ID
+        $tenant_id = (Get-ChildItem env:AZURE_TENANT_ID).value
+        $app_id = (Get-ChildItem env:AZURE_APP_ID).value
+        $app_key = (Get-ChildItem env:AZURE_APP_KEY).value
+        $subscription_id = (Get-ChildItem env:AZURE_SUBSCRIPTION_ID).value
 
-        $aks_rg = Get-ChildItem env:AKS_RG
-        $aks_asset_rg = Get-ChildItem env:AKS_ASSET_RG
-        $aks_name = Get-ChildItem env:AKS_NAME
+        $aks_rg = (Get-ChildItem env:AKS_RG).value
+        $aks_asset_rg = (Get-ChildItem env:AKS_ASSET_RG).value
+        $aks_name = (Get-ChildItem env:AKS_NAME).value
 
         Connect-AksEnvironment $tenant_id, $app_id, $app_key, $subscription_id, $aks_rg, $aks_name
     }
