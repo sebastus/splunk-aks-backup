@@ -14,7 +14,7 @@
    Version: V1.0 Initial Version 
 #>
 
-function Backup-Disk
+function Backup-SplunkData
 {
     [CmdletBinding()]
     param
