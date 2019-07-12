@@ -83,7 +83,7 @@ function Backup-SplunkData
     {
         kubectl -n splunk get pvc -o json > pvc_as.json
 
-        Backup-Disk -aks_rg $aks_rg -diskname "splunk-idxcluster-data-indexer-0"
+        Backup-Disk -aks_asset_rg $aks_asset_rg -diskname "splunk-idxcluster-data-indexer-0"
     }
     END
     {
