@@ -90,9 +90,12 @@ function Backup-SplunkData
             $podName = $item.metadata.name
 
             Write-Verbose "Looking at $podName disks..."
-        
+            $item
+
             foreach ($volumeMount in $item.spec.containers.volumeMounts)
             {
+                $volumeMount
+                
                 if ($volumeMount.name -contains "splunk-idxcluster")
                 {
                     $volumeName = $volumeMount.name
