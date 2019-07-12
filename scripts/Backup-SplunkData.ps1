@@ -14,6 +14,37 @@
    Version: V1.0 Initial Version 
 #>
 
+function Connect-AksEnvironment
+{
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [String]$tenant_id,
+
+        [Parameter(Mandatory=$true)]
+        [String]$app_id,
+
+        [Parameter(Mandatory=$true)]
+        [String]$app_key,
+
+        [Parameter(Mandatory=$true)]
+        [String]$subscription_id,
+
+        [Parameter(Mandatory=$true)]
+        [String]$aks_rg,
+
+        [Parameter(Mandatory=$true)]
+        [String]$aks_name
+    )    
+    $passwd = ConvertTo-SecureString $app_key -AsPlainText -Force
+    $pscredential = New-Object System.Management.Automation.PSCredential($app_id, $passwd)
+    Connect-AzAccount -ServicePrincipal -Credential $pscredential -TenantId $tenant_id
+
+    Get-AzSubscription -SubscriptionId $subscription_id -TenantId $tenant_id | Set-AzContext
+
+    Import-AzAksCredential -ResourceGroupName $aks_rg -Name $aks_name
+}
+
 function Backup-SplunkData
 {
     [CmdletBinding()]
@@ -22,14 +53,19 @@ function Backup-SplunkData
     )
     BEGIN
     {
+        Write-Verbose "$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)"
+
         # get environment vars
         $tenant_id = Get-ChildItem env:AZURE_TENANT_ID
         $app_id = Get-ChildItem env:AZURE_APP_ID
         $app_key = Get-ChildItem env:AZURE_APP_KEY
+        $subscription_id = Get-ChildItem env:AZURE_SUBSCRIPTION_ID
+
         $aks_rg = Get-ChildItem env:AKS_RG
+        $aks_asset_rg = Get-ChildItem env:AKS_ASSET_RG
         $aks_name = Get-ChildItem env:AKS_NAME
 
-        Write-Verbose "$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)"
+        Connect-AksEnvironment $tenant_id, $app_id, $app_key, $subscription_id, $aks_rg, $aks_name
     }
     PROCESS
     {
