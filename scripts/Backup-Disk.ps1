@@ -24,7 +24,10 @@ function Backup-Disk
         [String]$aks_asset_rg,
         [Parameter(Mandatory=$true, 
             HelpMessage="Name of the disk to be backed up.")]
-        [String]$diskname
+        [String]$diskname,
+        [Parameter(Mandatory=$true, 
+            HelpMessage="Location of the snapshot.")]
+        [String]$location
     )
     BEGIN
     {
@@ -37,7 +40,10 @@ function Backup-Disk
         $volumeName = $item.spec.volumeName
         $azdisk = Get-AzDisk -ResourceGroupName $aks_asset_rg -diskname "kubernetes-dynamic-$volumeName"
 
-        $azdisk.Name
+        $ssConfig =  New-AzSnapshotConfig -SourceUri $azdisk.Id -Location $location -CreateOption copy
+        $Snapshot = New-AzSnapshot -Snapshot $ssConfig -SnapshotName "disk-$diskName" -ResourceGroupName $aks_asset_rg
+
+        $Snapshot.Name
     }
     END
     {
