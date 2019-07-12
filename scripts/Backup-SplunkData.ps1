@@ -42,7 +42,7 @@ function Connect-AksEnvironment
 
     Get-AzSubscription -SubscriptionId $subscription_id -TenantId $tenant_id | Set-AzContext
 
-    Import-AzAksCredential -ResourceGroupName $aks_rg -Name $aks_name
+    Import-AzAksCredential -ResourceGroupName $aks_rg -Name $aks_name -Force
 }
 
 function Get-Env
@@ -82,6 +82,8 @@ function Backup-SplunkData
     PROCESS
     {
         kubectl -n splunk get pvc -o json > pvc_as.json
+
+        Backup-Disk -aks_rg $aks_rg -diskname "splunk-idxcluster-data-indexer-0"
     }
     END
     {

@@ -21,7 +21,7 @@ function Backup-Disk
     (
         [Parameter(Mandatory=$true, 
             HelpMessage="Name of the resource group containing the AKS cluster.")]
-        [String]$rgname,
+        [String]$aks_rg,
         [Parameter(Mandatory=$true, 
             HelpMessage="Name of the disk to be backed up.")]
         [String]$diskname
@@ -35,7 +35,9 @@ function Backup-Disk
         $pvc = (get-content .\pvc_as.json | convertfrom-json)
         $item = ($pvc.items | where-object {$_.metadata.name -eq $diskname})
         $volumeName = $item.spec.volumeName
-        Get-AzDisk -ResourceGroupName $rg -diskname "kubernetes-dynamic-$volumeName"    
+        $azdisk = Get-AzDisk -ResourceGroupName $aks_rg -diskname "kubernetes-dynamic-$volumeName"
+
+        $azdisk.Name
     }
     END
     {
