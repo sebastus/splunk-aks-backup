@@ -26,3 +26,5 @@ RUN cd ~ && \
 
 # install git
 RUN apt-get install -y git
+
+COPY ./scripts /home/scripts
