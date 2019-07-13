@@ -24,3 +24,5 @@ RUN pwsh -Command "& {Install-Module -Name Az -AllowClobber -Force}"
 RUN cd ~ && \
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
+# install git
+RUN apt-get install -y git
