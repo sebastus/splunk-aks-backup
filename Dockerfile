@@ -1,6 +1,7 @@
 FROM ubuntu:bionic
 
-RUN alias ll="ls -la" && apt-get update && \
+RUN apt-get update && \
+    echo 'alias ll="ls -la"' >> ~/.bashrc && \
     apt-get install -y curl 
 
 # install kubectl
@@ -25,6 +26,12 @@ RUN cd ~ && \
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # install git
-RUN apt-get install -y git
+# RUN apt-get install -y git
 
 COPY ./scripts /home/scripts
+
+RUN pwsh -Command "& {Register-PackageSource -Name MyNuGet -Location https://www.nuget.org/api/v2 -ProviderName NuGet}"
+RUN pwsh -Command "& {Install-Package Microsoft.ApplicationInsights -Force}"
+
+RUN cd ~/scripts && \
+    pwsh -Command "& {. ./Backup-Disk.ps1; . ./Backup-SplunkData.ps1}"
