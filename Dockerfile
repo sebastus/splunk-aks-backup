@@ -33,5 +33,5 @@ COPY ./scripts /home/scripts
 RUN pwsh -Command "& {Register-PackageSource -Name MyNuGet -Location https://www.nuget.org/api/v2 -ProviderName NuGet}"
 RUN pwsh -Command "& {Install-Package Microsoft.ApplicationInsights -Force}"
 
-RUN cd ~/scripts && \
+RUN cd /home/scripts && \
     pwsh -Command "& {. ./Backup-Disk.ps1; . ./Backup-SplunkData.ps1}"

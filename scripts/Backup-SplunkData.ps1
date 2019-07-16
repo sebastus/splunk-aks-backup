@@ -64,7 +64,11 @@ function Backup-SplunkData
     )
     BEGIN
     {
-        Write-Verbose "$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)"
+        $tcInstrumentationKey = "148b913b-2236-43a1-a600-b396d250c976"
+        $tc = [Microsoft.ApplicationInsights.TelemetryClient]::New()
+        $tc.InstrumentationKey = $tcInstrumentationKey
+
+        $tc.TrackTrace("$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)")
 
         # get environment vars
         $tenant_id = Get-Env "AZURE_TENANT_ID"
@@ -109,7 +113,8 @@ function Backup-SplunkData
     }
     END
     {
-        Write-Verbose "$((Get-Date).ToLongTimeString()) : Ended running $($MyInvocation.MyCommand)"
+        $tc.TrackTrace("$((Get-Date).ToLongTimeString()) : Ended running $($MyInvocation.MyCommand)")
+        $tc.Flush()
     }
 
 }
