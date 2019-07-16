@@ -18,20 +18,13 @@ RUN apt-get install -y software-properties-common && \
     apt-get update && \
     apt-get install -y powershell
 
-# install Az
+# install Azure Powershell cmdlets
 RUN pwsh -Command "& {Install-Module -Name Az -AllowClobber -Force}"
-
-# install AZ CLI
-RUN cd ~ && \
-    curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-
-# install git
-# RUN apt-get install -y git
-
-COPY ./scripts /home/scripts
-
 RUN pwsh -Command "& {Register-PackageSource -Name MyNuGet -Location https://www.nuget.org/api/v2 -ProviderName NuGet}"
 RUN pwsh -Command "& {Install-Package Microsoft.ApplicationInsights -Force}"
+
+COPY ./scripts /home/scripts
 RUN chmod +x /home/scripts/RunPwsh-Backups.sh
+
 ENTRYPOINT [ "/bin/bash" ]
 CMD ["/home/scripts/RunPwsh-Backups.sh"]
