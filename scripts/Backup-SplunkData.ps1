@@ -94,11 +94,11 @@ function Backup-SplunkData
         {
             $podName = $item.metadata.name
 
-            Write-Verbose "Stopping Splunk in $podName..."
+            $tc.TrackTrace("Stopping Splunk in $podName")
 
             kubectl -n splunk exec -it $podName sudo bin/splunk stop
 
-            Write-Verbose "Looking at $podName disks..."
+            $tc.TrackTrace("Looking at $podName disks.")
 
             foreach ($volumeMount in $item.spec.containers.volumeMounts)
             {
@@ -109,13 +109,13 @@ function Backup-SplunkData
         
                     $diskName = "$volumeName-$podName"
 
-                    Write-Verbose "Backing up $diskName..."
+                    $tc.TrackTrace("Backing up $diskName.")
 
                     Backup-Disk -aks_asset_rg $aks_asset_rg -diskname $diskName
                 }
             }
 
-            Write-Verbose "Starting Splunk in $podName..."
+            $tc.TrackTrace("Starting Splunk in $podName.")
 
             kubectl -n splunk exec -it $podName sudo bin/splunk start
             

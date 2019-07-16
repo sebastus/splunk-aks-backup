@@ -32,4 +32,4 @@ COPY ./scripts /home/scripts
 
 RUN pwsh -Command "& {Register-PackageSource -Name MyNuGet -Location https://www.nuget.org/api/v2 -ProviderName NuGet}"
 RUN pwsh -Command "& {Install-Package Microsoft.ApplicationInsights -Force}"
-
+RUN chmod +x /home/scripts/RunPwsh-Backups.sh
