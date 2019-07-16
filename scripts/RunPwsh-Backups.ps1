@@ -5,6 +5,7 @@ $tc.InstrumentationKey = $tcInstrumentationKey
 
 # log the job
 $tc.TrackTrace("$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)")
+$tc.Flush()
 
 # make the cmdlets in the source modules available
 . ./Get-Env.ps1
