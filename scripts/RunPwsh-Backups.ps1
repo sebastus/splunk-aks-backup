@@ -1,7 +1,7 @@
 # set up access to App Insights
 $tcInstrumentationKey = Get-ChildItem env:"AI_INSTRUMENTATION_KEY"
 $tc = [Microsoft.ApplicationInsights.TelemetryClient]::New()
-$tc.InstrumentationKey = $tcInstrumentationKey
+$tc.InstrumentationKey = $tcInstrumentationKey.value
 
 # log the job
 $tc.TrackTrace("$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)")
