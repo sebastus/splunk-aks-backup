@@ -45,17 +45,6 @@ function Connect-AksEnvironment
     Import-AzAksCredential -ResourceGroupName $aks_rg -Name $aks_name -Force
 }
 
-function Get-Env
-{
-    param
-    (
-        [Parameter(Mandatory=$true)]
-        [String]$env
-    )
-    $var = Get-ChildItem env:$env
-    $var.value
-}
-
 function Backup-SplunkData
 {
     [CmdletBinding()]
@@ -64,12 +53,6 @@ function Backup-SplunkData
     )
     BEGIN
     {
-        $tcInstrumentationKey = "148b913b-2236-43a1-a600-b396d250c976"
-        $tc = [Microsoft.ApplicationInsights.TelemetryClient]::New()
-        $tc.InstrumentationKey = $tcInstrumentationKey
-
-        $tc.TrackTrace("$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)")
-
         # get environment vars
         $tenant_id = Get-Env "AZURE_TENANT_ID"
         $app_id = Get-Env "AZURE_APP_ID"
@@ -79,6 +62,12 @@ function Backup-SplunkData
         $aks_rg = Get-Env "AKS_RG"
         $aks_asset_rg = Get-Env "AKS_ASSET_RG"
         $aks_name = Get-Env "AKS_NAME"
+        $tcInstrumentationKey = Get-Env "AI_INSTRUMENTATION_KEY"
+
+        $tc = [Microsoft.ApplicationInsights.TelemetryClient]::New()
+        $tc.InstrumentationKey = $tcInstrumentationKey
+
+        $tc.TrackTrace("$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)")
 
         Connect-AksEnvironment -tenant_id $tenant_id -app_id $app_id -app_key $app_key `
             -subscription_id $subscription_id -aks_rg $aks_rg -aks_name $aks_name

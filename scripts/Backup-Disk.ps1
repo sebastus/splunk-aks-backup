@@ -28,7 +28,11 @@ function Backup-Disk
     )
     BEGIN
     {
-        Write-Verbose "$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)"
+        $tcInstrumentationKey = "148b913b-2236-43a1-a600-b396d250c976"
+        $tc = [Microsoft.ApplicationInsights.TelemetryClient]::New()
+        $tc.InstrumentationKey = $tcInstrumentationKey
+
+        $tc.TrackTrace("$((Get-Date).ToLongTimeString()) : Started running $($MyInvocation.MyCommand)")
     }
     PROCESS
     {
@@ -42,19 +46,19 @@ function Backup-Disk
         $ss = Get-AzSnapshot -ResourceGroupName $aks_asset_rg -name $diskName
         if ($null -ne $ss)
         {
-            Write-Verbose "Removing old snapshot $diskName..."
+            $tc.TrackTrace("Removing old snapshot $diskName.")
             $ss | Remove-AzSnapshot -Force
         }
         $ErrorActionPreference = "continue"
 
-        Write-Verbose "Backing up disk: $diskName..."
+        $tc.TrackTrace("Backing up disk: $diskName.")
         $ssConfig =  New-AzSnapshotConfig -SourceUri $azdisk.Id -Location $azdisk.location -CreateOption copy
         New-AzSnapshot -Snapshot $ssConfig -SnapshotName $diskName -ResourceGroupName $aks_asset_rg
 
     }
     END
     {
-        Write-Verbose "$((Get-Date).ToLongTimeString()) : Ended running $($MyInvocation.MyCommand)"
+        $tc.TrackTrace("$((Get-Date).ToLongTimeString()) : Ended running $($MyInvocation.MyCommand)")
     }
 
 }
